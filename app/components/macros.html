@@ -11,6 +11,11 @@
         <input type="checkbox" ng-model="options.takeOutDoubleQuotationMarks"/>{{ 'MACRO_TAKE_OUT_DOUBLE_QUOTATION_MARKS' | translate }}
       </label>
 	</div>
+  <div class="controls">
+    <label class="checkbox">
+      <input type="checkbox" ng-model="macroForSomethingNeedDoing"/>{{ 'MACRO_TAKE_SOMTHING_NEED_DOING' | translate }}
+    </label>
+</div>
   </div>
 </form>
 <div ng-repeat="macro in macroList track by $index">

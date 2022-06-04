@@ -1,8 +1,6 @@
 (function () {
   'use strict';
 
-  var MAX_LINES = 15;
-
   angular
     .module('ffxivCraftOptWeb.components')
     .directive('macros', factory);
@@ -22,12 +20,15 @@
 
   function controller($scope, $translate, _actionsByName, _allActions, _iActionClassSpecific) {
     $scope.macroList = [];
+    $scope.macroForSomethingNeedDoing = true;
 
     $scope.$on('$translateChangeSuccess', update);
     $scope.$watchCollection('sequence', update);
     $scope.$watch('cls', update);
     $scope.$watchCollection('options', update);
+    $scope.$watch('macroForSomethingNeedDoing', update);
 
+    var MAX_LINES = $scope.macroForSomethingNeedDoing ? 99 : 15;
     update();
 
     //////////////////////////////////////////////////////////////////////////
@@ -64,8 +65,8 @@
     }
 
     function buildSequenceLines(options, sequence, buffs) {
-      var waitString = '<wait.' + options.waitTime + '>';
-      var buffWaitString = '<wait.' + options.buffWaitTime + '>';
+      var waitString = '<wait.' + ($scope.macroForSomethingNeedDoing ? options.waitTime - 0.4 : options.waitTime) + '>';
+      var buffWaitString = '<wait.' + ($scope.macroForSomethingNeedDoing ? options.buffWaitTime - 0.4 : options.buffWaitTime) + '>';
 
       var lines = [];
 
@@ -105,11 +106,11 @@
           var time;
           if (buffs[actionFromList]) {
             line += buffWaitString;
-            time = options.buffWaitTime;
+            time = $scope.macroForSomethingNeedDoing ? options.buffWaitTime - 0.4 : options.buffWaitTime;
           }
           else {
             line += waitString;
-            time = options.waitTime
+            time = $scope.macroForSomethingNeedDoing ? options.waitTime - 0.4 : options.waitTime
           }
           lines.push({text: line, time: time});
         }
@@ -139,7 +140,7 @@
 
         if (macroLineCount === MAX_LINES - 1) {
           if (lines.length - (j + 1) > 1) {
-            macroString += '/echo 宏 #' + macroIndex + ' 已完成！' + soundEffect(options.stepSoundEffect, options.stepSoundEnabled) + '\n';
+            '/echo 宏 #' + macroIndex + ' 已完成！' + soundEffect(options.stepSoundEffect, options.stepSoundEnabled) + '\n';
             macroList.push({text: macroString, time: macroTime});
 
             macroString = '';
@@ -155,8 +156,13 @@
         }
       }
 
+      if($scope.macroForSomethingNeedDoing){
+        macroString += '/waitaddon "RecipeNote"\n/click "Synthesize"\n/loop\n';
+        macroString = '/waitaddon "Synthesis"\n' + macroString
+      }
+
       if (macroLineCount > 0) {
-        if (macroLineCount < MAX_LINES) {
+        if (macroLineCount < MAX_LINES && !$scope.macroForSomethingNeedDoing) {
           macroString += '/echo 宏 #' + macroIndex + ' 已完成！' + soundEffect(options.finishSoundEffect, options.stepSoundEnabled) + '\n';
         }
         macroList.push({text: macroString, time: macroTime});
