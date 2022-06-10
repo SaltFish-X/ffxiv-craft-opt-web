@@ -18,15 +18,21 @@
     }
   }
 
-  function controller($scope, $translate, _actionsByName, _allActions, _iActionClassSpecific) {
+  function controller($scope, $rootScope, $translate, _actionsByName, _allActions, _iActionClassSpecific) {
     $scope.macroList = [];
     $scope.macroForSomethingNeedDoing = true;
+    $scope.requireMacroString = ''
 
     $scope.$on('$translateChangeSuccess', update);
     $scope.$watchCollection('sequence', update);
     $scope.$watch('cls', update);
     $scope.$watchCollection('options', update);
     $scope.$watch('macroForSomethingNeedDoing', update);
+    $scope.$watch('requireMacroString', update);
+    $rootScope.$on('buffsChange',function(event, buffsData){
+      if (buffsData.food) $scope.requireMacroString = '/require "进食"\n' + $scope.requireMacroString
+      if (buffsData.medicine) $scope.requireMacroString = '/require "强化药"\n' + $scope.requireMacroString
+    })
 
     var MAX_LINES = $scope.macroForSomethingNeedDoing ? 99 : 15;
     update();
@@ -159,6 +165,7 @@
       if($scope.macroForSomethingNeedDoing){
         macroString += '/waitaddon "RecipeNote"\n/click "Synthesize"\n/loop\n';
         macroString = '/waitaddon "Synthesis"\n' + macroString
+        macroString = $scope.requireMacroString + macroString
       }
 
       if (macroLineCount > 0) {

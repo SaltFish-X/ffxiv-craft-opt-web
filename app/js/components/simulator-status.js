@@ -51,7 +51,6 @@
 
     function update() {
       $scope.baseStats = $scope.crafter;
-
       if ($scope.bonusStats) {
         var buffStats = _bonusStats.newBonusStats();
         if ($scope.bonusStats.food) {
@@ -70,6 +69,7 @@
 
         var stats = _bonusStats.sumCrafterBonusStats($scope.crafter, $scope.buffStats);
         $scope.stats = _bonusStats.sumCrafterBonusStats(stats, $scope.bonusStats);
+        $rootScope.$broadcast('buffsChange', $scope.bonusStats);
       }
       else {
         $scope.buffStats = _bonusStats.newBonusStats();
