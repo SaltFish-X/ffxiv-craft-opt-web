@@ -30,8 +30,7 @@
     $scope.$watch('macroForSomethingNeedDoing', update);
     $scope.$watch('requireMacroString', update);
     $rootScope.$on('buffsChange',function(event, buffsData){
-      if (buffsData.food) $scope.requireMacroString = '/require "进食"\n' + $scope.requireMacroString
-      if (buffsData.medicine) $scope.requireMacroString = '/require "强化药"\n' + $scope.requireMacroString
+      $scope.requireMacroString = (buffsData.food ? '/require 进食\n' : "") + (buffsData.medicine ? '/require 强化药\n' : "")
     })
 
     var MAX_LINES = $scope.macroForSomethingNeedDoing ? 99 : 15;
