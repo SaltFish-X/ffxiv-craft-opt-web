@@ -162,8 +162,7 @@
       }
 
       if($scope.macroForSomethingNeedDoing){
-        macroString += '/waitaddon "RecipeNote"\n/click "Synthesize"\n/loop\n';
-        macroString = '/waitaddon "Synthesis"\n' + macroString
+        macroString = '/waitaddon "RecipeNote"\n/click "Synthesize"\n/loop\n/waitaddon "Synthesis"\n' + macroString
         macroString = $scope.requireMacroString + macroString
       }
 
